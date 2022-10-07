@@ -62,7 +62,7 @@ class Cosine_PDG_Adam:
         loss1 = criterion(prediction, target)
         loss2 = self.loss_function(prediction_inner, target_inner).sum()
 
-        loss = -loss1 + loss2
+        loss = loss1 + loss2
 
         grad1 = torch.autograd.grad(loss, image, retain_graph=False, create_graph=False)[0]
 
