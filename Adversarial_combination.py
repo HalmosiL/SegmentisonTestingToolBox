@@ -67,7 +67,7 @@ class Cosine_PDG_Adam:
         print("loss_entropy:", loss1.item())
         print("loss_cossine:", loss2.item())
         
-        image = self.optimizer.step(-1 * (grad2 + grad1), image)
+        image = self.optimizer.step(-1 * (grad2 + 10*grad1), image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
         image[:, 1, :, :] = image[:, 1, :, :] * self.std_origin[1] + self.mean_origin[1]
