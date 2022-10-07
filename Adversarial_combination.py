@@ -60,7 +60,7 @@ class Cosine_PDG_Adam:
         print(target.shape)
 
         loss1 = criterion(prediction, target)
-        loss2 = self.loss_function(prediction_inner, target_inner).sum()
+        loss2 = 1 - self.loss_function(prediction_inner, target_inner).sum()
 
         loss = loss1 + loss2
 
