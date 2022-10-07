@@ -62,13 +62,13 @@ class Cosine_PDG_Adam:
         loss1 = criterion(prediction, target)
         loss2 = self.loss_function(prediction_inner, target_inner).sum()
 
-        loss = -1 * loss1 + loss2
+        loss = -loss1 + loss2
 
         grad1 = torch.autograd.grad(loss, image, retain_graph=False, create_graph=False)[0]
 
         print("loss:", loss.item())
         
-        image = self.optimizer.step(grad1, image)
+        image = self.optimizer.step(-1*grad1, image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
         image[:, 1, :, :] = image[:, 1, :, :] * self.std_origin[1] + self.mean_origin[1]
@@ -127,11 +127,10 @@ def model_immer_attack_auto_loss_combination(image, target, model, attack, numbe
     
     image_adv.requires_grad = True
     x, x_inner = model(image, inner=True)
-    target_inner = torch.rand(*x_inner.shape).to(device)
 
     for i in range(number_of_steps):
         prediction, prediction_inner = model(image_adv, inner=True)        
-        image_adv = attack.step_combination(image_min, image_max, image_adv, prediction, prediction_inner, target, target_inner)
+        image_adv = attack.step_combination(image_min, image_max, image_adv, prediction, prediction_inner, target, x_inner+0.00001)
         model.zero_grad()
     
     attack.reset()
