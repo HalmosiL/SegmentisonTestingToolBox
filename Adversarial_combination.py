@@ -33,7 +33,7 @@ class Adam_optimizer:
 
         self.t += 1
 
-        image = image - (self.lr * m_l) / (torch.sqrt(self.v_t) + self.e)
+        image = image + (self.lr * m_l) / (torch.sqrt(self.v_t) + self.e)
 
         return image
 
@@ -69,7 +69,7 @@ class Cosine_PDG_Adam:
 
         print("loss:", loss.item())
         
-        image = self.optimizer.step(-1*(grad1.sign() + grad2), image)
+        image = self.optimizer.step(grad1.sign() + grad2), image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
         image[:, 1, :, :] = image[:, 1, :, :] * self.std_origin[1] + self.mean_origin[1]
@@ -124,7 +124,6 @@ def model_immer_attack_auto_loss_combination(image, target, model, attack, numbe
     image_max = input_unnorm + attack.clip_size
     
     image_adv = image.clone().detach().to(device)
-    image_adv = (image_adv.cpu().detach() + ((torch.rand(image_adv.shape) - 0.5) / 0.5) * 0.03).to(device)
     
     image_adv.requires_grad = True
     x, x_inner = model(image, inner=True)
