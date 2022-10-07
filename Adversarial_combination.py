@@ -64,8 +64,8 @@ class Cosine_PDG_Adam:
 
         loss = loss1 + loss2
 
-        grad1 = torch.autograd.grad(loss1, image, retain_graph=False, create_graph=False)[0]
-        grad2 = torch.autograd.grad(loss2, image, retain_graph=False, create_graph=False)[0]
+        grad1 = torch.autograd.grad(loss1, image, retain_graph=True, create_graph=False)[0]
+        grad2 = torch.autograd.grad(loss2, image, retain_graph=True, create_graph=False)[0]
 
         print("loss:", loss.item())
         
