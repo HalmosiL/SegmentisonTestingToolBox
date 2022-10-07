@@ -62,13 +62,13 @@ class Cosine_PDG_Adam:
         loss1 = criterion(prediction, target)
         loss2 = self.loss_function(prediction_inner, target_inner).sum()
 
-        loss = loss1 - loss2
+        loss = -1 * loss1 + loss2
 
         grad1 = torch.autograd.grad(loss, image, retain_graph=False, create_graph=False)[0]
 
         print("loss:", loss.item())
         
-        image = self.optimizer.step(-1 * grad1, image)
+        image = self.optimizer.step(grad1, image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
         image[:, 1, :, :] = image[:, 1, :, :] * self.std_origin[1] + self.mean_origin[1]
