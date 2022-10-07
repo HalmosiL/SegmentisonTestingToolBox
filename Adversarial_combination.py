@@ -50,7 +50,7 @@ class Cosine_PDG_Adam:
         self.mean_origin = [0.485, 0.456, 0.406]
         self.std_origin = [0.229, 0.224, 0.225]
 
-    def step_combination(self, image_min, image_max, image, prediction, prediction_inner, target, target_inner):
+    def step_combination(self, image_min, image_max, image, prediction, prediction_inner, target, target_inner, i):
         prediction_inner = prediction_inner.reshape(prediction_inner.shape[0], -1)
         target_inner = target_inner.reshape(target_inner.shape[0], -1)
 
@@ -131,7 +131,7 @@ def model_immer_attack_auto_loss_combination(image, target, model, attack, numbe
 
     for i in range(number_of_steps):
         prediction, prediction_inner = model(image_adv, inner=True)        
-        image_adv = attack.step_combination(image_min, image_max, image_adv, prediction, prediction_inner, target, x_inner+0.00001)
+        image_adv = attack.step_combination(image_min, image_max, image_adv, prediction, prediction_inner, target, x_inner+0.00001, i)
         model.zero_grad()
     
     attack.reset()
