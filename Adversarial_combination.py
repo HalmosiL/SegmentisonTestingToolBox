@@ -69,7 +69,7 @@ class Cosine_PDG_Adam:
 
         print("loss:", loss.item())
         
-        image = self.optimizer.step(-1*(grad1 + grad2), image)
+        image = self.optimizer.step(-1*(grad1.sign() + grad2), image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
         image[:, 1, :, :] = image[:, 1, :, :] * self.std_origin[1] + self.mean_origin[1]
