@@ -64,11 +64,12 @@ class Cosine_PDG_Adam:
 
         loss = loss1 + loss2
 
-        grad1 = torch.autograd.grad(loss, image, retain_graph=False, create_graph=False)[0]
+        grad1 = torch.autograd.grad(loss1, image, retain_graph=False, create_graph=False)[0]
+        grad2 = torch.autograd.grad(loss2, image, retain_graph=False, create_graph=False)[0]
 
         print("loss:", loss.item())
         
-        image = self.optimizer.step(-1*grad1, image)
+        image = self.optimizer.step(-1*grad1 + grad2, image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
         image[:, 1, :, :] = image[:, 1, :, :] * self.std_origin[1] + self.mean_origin[1]
