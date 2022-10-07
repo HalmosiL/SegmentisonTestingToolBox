@@ -128,7 +128,7 @@ def net_process(model, image, target, mean, std=None):
         target = torch.cat([target, target.flip(2)], 0)
 
     if True:
-        attack = Cosine_PDG_Adam(step_size=0.1, clip_size=0.03)
+        attack = Cosine_PDG_Adam(step_size=0.005, clip_size=0.03)
         adver_input = model_immer_attack_auto_loss_combination(input, target, model, attack, 120, "cuda:0")
 
         with torch.no_grad():
