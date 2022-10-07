@@ -67,7 +67,8 @@ class Cosine_PDG_Adam:
         grad1 = torch.autograd.grad(loss1, image, retain_graph=True, create_graph=False)[0]
         grad2 = torch.autograd.grad(loss2, image, retain_graph=True, create_graph=False)[0]
 
-        print("loss:", loss.item())
+        print("loss_entropy:", loss1.item())
+        print("loss_cossine:", loss2.item())
         
         image = self.optimizer.step(grad1.sign() + grad2, image)
         
