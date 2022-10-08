@@ -182,7 +182,7 @@ def net_process(model, image, target, mean, std=None):
         target = torch.cat([target, target.flip(2)], 0)
 
     if True:
-        adver_input = BIM(input, target, model, eps=0.03, k_number=120, alpha=0.01)
+        adver_input = BIM(input, target, model, eps=0.03, k_number=120, alpha=1)
         with torch.no_grad():
             output = model(adver_input)
     else:
