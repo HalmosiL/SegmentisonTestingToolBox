@@ -62,6 +62,9 @@ def PGD(input, target, model, clip_min, clip_max, eps=0.2):
     criterion = nn.CrossEntropyLoss(ignore_index=ignore_label).cuda()
     loss = criterion(result, target.detach())
     loss.backward()
+    
+    print("Loss:", loss.item())
+    
     res = input_variable.grad
 
     ################################################################################
