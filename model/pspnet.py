@@ -419,7 +419,10 @@ class PSPNet(nn.Module):
                 nn.Conv2d(256, classes, kernel_size=1)
             )
 
-    def forward(self, x, y=None, indicate=0):
+    def forward(self, x, y=None, indicate=0, inner=False):
+        if(inner):
+            return self.forward_inner_and_full(x)
+        
         x_size = x.size()
         assert (x_size[2]-1) % 8 == 0 and (x_size[3]-1) % 8 == 0
         h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
@@ -446,6 +449,37 @@ class PSPNet(nn.Module):
         else:
             return x
 
+    def forward_inner_and_full(self, x):
+        x_size = x.size()
+        assert (x_size[2]-1) % 8 == 0 and (x_size[3]-1) % 8 == 0
+        h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
+        w = int((x_size[3] - 1) / 8 * self.zoom_factor + 1)
+
+        x = self.layer0(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x_tmp = self.layer3(x)
+        x = self.layer4(x_tmp)
+        
+        x_inner = x
+        
+        if self.use_ppm:
+            x = self.ppm(x)
+        x = self.cls(x)
+        if self.zoom_factor != 1:
+            x = F.interpolate(x, size=(h, w), mode='bilinear', align_corners=True)
+
+        if self.training or indicate==1:
+            aux = self.aux(x_tmp)
+            if self.zoom_factor != 1:
+                aux = F.interpolate(aux, size=(h, w), mode='bilinear', align_corners=True)
+            main_loss = self.criterion(x, y)
+            aux_loss = self.criterion(aux, y)
+            return x.max(1)[1], main_loss, aux_loss, x
+        else:
+            return x, x_inner
+        
+        
     def getSliceModel(self):
         class SliceModule(nn.Module):
             def __init__(self, 
