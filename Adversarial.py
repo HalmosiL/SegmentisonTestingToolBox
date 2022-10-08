@@ -68,11 +68,11 @@ class Cosine_PDG_Adam:
 
         print("loss:", loss.item())
         
-        image = self.optimizer.step(-1 * grad1, image)
-        
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
         image[:, 1, :, :] = image[:, 1, :, :] * self.std_origin[1] + self.mean_origin[1]
         image[:, 2, :, :] = image[:, 2, :, :] * self.std_origin[2] + self.mean_origin[2]
+            
+        image = self.optimizer.step(-1 * grad1, image)
             
         image = torch.min(image, image_max)
         image = torch.max(image, image_min)
