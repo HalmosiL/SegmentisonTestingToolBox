@@ -67,10 +67,10 @@ def PGD(input, target, model, clip_min, clip_max, optimizer=None):
 
     ################################################################################
     adversarial_example = input.detach().clone()
+    adversarial_example = optimizer.step(-1*input_variable.grad, adversarial_example)
     adversarial_example[:, 0, :, :] = adversarial_example[:, 0, :, :] * std_origin[0] + mean_origin[0]
     adversarial_example[:, 1, :, :] = adversarial_example[:, 1, :, :] * std_origin[1] + mean_origin[1]
     adversarial_example[:, 2, :, :] = adversarial_example[:, 2, :, :] * std_origin[2] + mean_origin[2]
-    adversarial_example = optimizer.step(-1*input_variable.grad, adversarial_example)
     adversarial_example = torch.max(adversarial_example, clip_min)
     adversarial_example = torch.min(adversarial_example, clip_max)
     adversarial_example = torch.clamp(adversarial_example, min=0.0, max=1.0)
