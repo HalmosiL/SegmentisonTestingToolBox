@@ -446,6 +446,42 @@ class PSPNet(nn.Module):
         else:
             return x
 
+    def getSliceModel(self):
+        class SliceModule(nn.Module):
+            def __init__(self, 
+                layer0,
+                layer1,
+                layer2,
+                layer3,
+                layer4,
+                ppm
+            ):
+                super().__init__()
+                self.layer0 = layer0
+                self.layer1 = layer1
+                self.layer2 = layer2
+                self.layer3 = layer3
+                self.layer4 = layer4
+                self.ppm = ppm
+
+            def forward(self, x):
+                x = self.layer0(x)
+                x = self.layer1(x)
+                x = self.layer2(x)
+                x = self.layer3(x)
+                x = self.layer4(x)
+                x = self.ppm(x)
+
+                return x
+
+        return SliceModule(
+            self.layer0,
+            self.layer1,
+            self.layer2,
+            self.layer3,
+            self.layer4,
+            self.ppm
+        ).eval()
 
 
 class PSPNet_DDCAT(nn.Module):
