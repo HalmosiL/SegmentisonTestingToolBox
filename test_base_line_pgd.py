@@ -96,7 +96,7 @@ def BIM(input, target, model, eps=0.03, k_number=2, alpha=0.01):
     adversarial_example = input.detach().clone()
     adversarial_example.requires_grad = True
     for mm in range(k_number):
-        adversarial_example = FGSM(adversarial_example, target, model, clip_min, clip_max, eps=alpha)
+        adversarial_example = PGD(adversarial_example, target, model, clip_min, clip_max, eps=alpha)
         adversarial_example = adversarial_example.detach()
         adversarial_example.requires_grad = True
         model.zero_grad()
