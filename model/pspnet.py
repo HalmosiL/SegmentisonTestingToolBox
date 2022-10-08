@@ -449,7 +449,7 @@ class PSPNet(nn.Module):
         else:
             return x
 
-    def forward_inner_and_full(self, x):
+    def forward_inner_and_full(self, x, indicate=0):
         x_size = x.size()
         assert (x_size[2]-1) % 8 == 0 and (x_size[3]-1) % 8 == 0
         h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
