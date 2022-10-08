@@ -24,7 +24,7 @@ class Adam_optimizer:
 
         return (self.lr * m_l) / (torch.sqrt(self.v_t) + self.e)
 
-    def step(self, grad):
+    def step(self, grad, image):
         self.m_t = self.B1 * self.m_t + (1 - self.B1) * grad
         self.v_t = self.B2 * self.v_t + (1 - self.B2) * (grad ** 2)
 
@@ -33,7 +33,9 @@ class Adam_optimizer:
 
         self.t += 1
 
-        return (self.lr * m_l) / (torch.sqrt(self.v_t) + self.e)
+        image = image - (self.lr * m_l) / (torch.sqrt(self.v_t) + self.e)
+
+        return image
 
 class Cosine_PDG_Adam:
     def __init__(self, step_size, clip_size):
@@ -91,13 +93,11 @@ class Cosine_PDG_Adam:
         grad = torch.autograd.grad(loss, image, retain_graph=False, create_graph=False)[0]
         print("loss:", loss.item())
         
-        grad = self.optimizer.step(-1*grad)
+        image = self.optimizer.step(-1*grad, image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
         image[:, 1, :, :] = image[:, 1, :, :] * self.std_origin[1] + self.mean_origin[1]
         image[:, 2, :, :] = image[:, 2, :, :] * self.std_origin[2] + self.mean_origin[2]
-            
-        image = image - grad
             
         image = torch.min(image, image_max)
         image = torch.max(image, image_min)
