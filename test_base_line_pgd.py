@@ -47,7 +47,7 @@ def get_logger():
     return logger
 
 
-def PGD(input, target, model, clip_min, clip_max, eps=0.2, optimizer=None):
+def PGD(input, target, model, clip_min, clip_max, optimizer=None):
     input_variable = input.detach().clone()
     input_variable.requires_grad = True
     model.zero_grad()
