@@ -111,6 +111,6 @@ if __name__ == '__main__':
             print(sys.argv[i + 2])
             main(sys.argv[i + 2])
             
-        print("\n")
+            print()
     else:
         main()
