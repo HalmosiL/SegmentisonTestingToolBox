@@ -52,10 +52,7 @@ def cal_acc(data_list, pred_folder, classes, names):
 
     len_ = len(glob.glob(pred_folder + "/" + "*"))
 
-    for i, (image_path, target_path) in enumerate(data_list):
-        print(target_path)
-        print(image_path)
-        
+    for i, (image_path, target_path) in enumerate(data_list):        
         image_name = image_path.split('/')[-1].split('.')[0]
         pred = cv2.imread(os.path.join(pred_folder, image_name+'.png'), cv2.IMREAD_GRAYSCALE)
         target = cv2.imread(target_path, cv2.IMREAD_GRAYSCALE)
@@ -85,19 +82,19 @@ def cal_acc(data_list, pred_folder, classes, names):
         for i in range(classes):
             logger.info('Class_{} result: iou/accuracy {:.4f}/{:.4f}, name: {}.'.format(i, iou_class[i], accuracy_class[i], names[i]))
 
-def main(data_root=None):
+def main(save_folder=None):
     global args, logger
     args = get_parser()
     logger = get_logger()
     
-    if(data_root is None):
-        data_root = args.data_root
+    if(save_folder is None):
+        save_folder = args.save_folder
 
-    gray_folder = os.path.join(args.save_folder, 'gray')
-    color_folder = os.path.join(args.save_folder, 'color')
+    gray_folder = os.path.join(save_folder + "/", 'gray')
+    color_folder = os.path.join(save_folder + "/", 'color')
 
     test_transform = transform.Compose([transform.ToTensor()])
-    test_data = dataset.SemData(split=args.split, data_root=data_root, data_list=args.test_list, transform=test_transform)
+    test_data = dataset.SemData(split=args.split, data_root=args.data_root, data_list=args.test_list, transform=test_transform)
 
     names = [line.rstrip('\n') for line in open(args.names_path)]
 
