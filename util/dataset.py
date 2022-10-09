@@ -20,8 +20,6 @@ def make_dataset(split='train', data_root=None, data_list=None):
         raise (RuntimeError("Image list file do not exist: " + data_list + "\n"))
     image_label_list = []
     list_read = open(data_list).readlines()
-    print("Totally {} samples in {} set.".format(len(list_read), split))
-    print("Starting Checking image&label pair {} list...".format(split))
     for line in list_read:
         line = line.strip()
         line_split = line.split(' ')
@@ -45,7 +43,7 @@ def make_dataset(split='train', data_root=None, data_list=None):
         '''
         item = (image_name, label_name)
         image_label_list.append(item)
-    print("Checking image&label pair {} list done!".format(split))
+        
     return image_label_list
 
 
