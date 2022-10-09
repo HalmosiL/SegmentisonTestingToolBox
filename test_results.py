@@ -110,5 +110,7 @@ if __name__ == '__main__':
         for i in range(len(sys.argv) - 2):
             print(sys.argv[i + 2])
             main(sys.argv[i + 2])
+            
+        print("\n")
     else:
         main()
