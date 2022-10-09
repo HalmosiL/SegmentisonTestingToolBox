@@ -29,10 +29,7 @@ def get_parser():
 
     cfg = config.load_cfg_from_cfg_file(args.config)
     
-    print(cfg)
-    
     return cfg
-
 
 def get_logger():
     logger_name = "main-logger"
