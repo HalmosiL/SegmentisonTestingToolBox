@@ -102,9 +102,7 @@ def main(save_folder=None):
     cal_acc(test_data.data_list, gray_folder, args.classes, names)
 
 
-if __name__ == '__main__':    
-    print(sys.argv)
-    
+if __name__ == '__main__':        
     if(len(sys.argv) > 2):
         if(sys.argv[1] == "no"):
             detail = False
