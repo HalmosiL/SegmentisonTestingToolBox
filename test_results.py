@@ -53,6 +53,9 @@ def cal_acc(data_list, pred_folder, classes, names):
     len_ = len(glob.glob(pred_folder + "/" + "*"))
 
     for i, (image_path, target_path) in enumerate(data_list):
+        print(target_path)
+        print(image_path)
+        
         image_name = image_path.split('/')[-1].split('.')[0]
         pred = cv2.imread(os.path.join(pred_folder, image_name+'.png'), cv2.IMREAD_GRAYSCALE)
         target = cv2.imread(target_path, cv2.IMREAD_GRAYSCALE)
