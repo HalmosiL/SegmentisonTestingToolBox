@@ -2,6 +2,7 @@ import os
 import time
 import logging
 import argparse
+import sys
 
 import cv2
 import numpy as np
@@ -11,6 +12,9 @@ from util import dataset, transform, config
 from util.util import AverageMeter, intersectionAndUnion, check_makedirs, colorize
 
 cv2.ocl.setUseOpenCL(False)
+
+global detail
+detail = True
 
 def get_parser():
     parser = argparse.ArgumentParser(description='PyTorch Semantic Segmentation')
@@ -40,6 +44,7 @@ def get_logger():
     return logger
 
 def cal_acc(data_list, pred_folder, classes, names):
+    global detail
     intersection_meter = AverageMeter()
     union_meter = AverageMeter()
     target_meter = AverageMeter()
@@ -57,7 +62,9 @@ def cal_acc(data_list, pred_folder, classes, names):
         union_meter.update(union)
         target_meter.update(target)
         accuracy = sum(intersection_meter.val) / (sum(target_meter.val) + 1e-10)
-        logger.info('Evaluating {0}/{1} on image {2}, accuracy {3:.4f}.'.format(i + 1, len(data_list), image_name+'.png', accuracy))
+        
+        if(detail):
+            logger.info('Evaluating {0}/{1} on image {2}, accuracy {3:.4f}.'.format(i + 1, len(data_list), image_name+'.png', accuracy))
 
         if(i + 1 == len_):
             break
@@ -69,10 +76,15 @@ def cal_acc(data_list, pred_folder, classes, names):
     allAcc = sum(intersection_meter.sum) / (sum(target_meter.sum) + 1e-10)
 
     logger.info('Eval result: mIoU/mAcc/allAcc {:.4f}/{:.4f}/{:.4f}.'.format(mIoU, mAcc, allAcc))
-    for i in range(classes):
-        logger.info('Class_{} result: iou/accuracy {:.4f}/{:.4f}, name: {}.'.format(i, iou_class[i], accuracy_class[i], names[i]))
+    
+    if(detail):
+        for i in range(classes):
+            logger.info('Class_{} result: iou/accuracy {:.4f}/{:.4f}, name: {}.'.format(i, iou_class[i], accuracy_class[i], names[i]))
 
-def main():
+def main(data_root=None):
+    if(data_root is None):
+        data_root = args.data_root
+    
     global args, logger
     args = get_parser()
     logger = get_logger()
@@ -81,7 +93,7 @@ def main():
     color_folder = os.path.join(args.save_folder, 'color')
 
     test_transform = transform.Compose([transform.ToTensor()])
-    test_data = dataset.SemData(split=args.split, data_root=args.data_root, data_list=args.test_list, transform=test_transform)
+    test_data = dataset.SemData(split=args.split, data_root=data_root, data_list=args.test_list, transform=test_transform)
 
     names = [line.rstrip('\n') for line in open(args.names_path)]
 
@@ -93,4 +105,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if(len(sys.argv) > 2):
+        if(sys.argv[1] == "no"):
+            global detail
+            detail = False
+        
+        for i in range(len(sys.argv) - 2):
+            print(sys.argv[i + 2])
+            main(sys.argv[i + 2])
+    else:
+        main()
