@@ -82,12 +82,12 @@ def cal_acc(data_list, pred_folder, classes, names):
             logger.info('Class_{} result: iou/accuracy {:.4f}/{:.4f}, name: {}.'.format(i, iou_class[i], accuracy_class[i], names[i]))
 
 def main(data_root=None):
-    if(data_root is None):
-        data_root = args.data_root
-    
     global args, logger
     args = get_parser()
     logger = get_logger()
+    
+    if(data_root is None):
+        data_root = args.data_root
 
     gray_folder = os.path.join(args.save_folder, 'gray')
     color_folder = os.path.join(args.save_folder, 'color')
