@@ -28,6 +28,9 @@ def get_parser():
     attack_flag = True
 
     cfg = config.load_cfg_from_cfg_file(args.config)
+    
+    print(cfg)
+    
     return cfg
 
 
