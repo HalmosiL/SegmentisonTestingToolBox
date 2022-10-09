@@ -105,6 +105,8 @@ def main(data_root=None):
 
 
 if __name__ == '__main__':    
+    print(sys.argv)
+    
     if(len(sys.argv) > 2):
         if(sys.argv[1] == "no"):
             detail = False
