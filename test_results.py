@@ -28,8 +28,6 @@ def get_parser():
     attack_flag = True
 
     cfg = config.load_cfg_from_cfg_file(args.config)
-    if args.opts is not None:
-        cfg = config.merge_cfg_from_list(cfg, args.opts)
     return cfg
 
 
