@@ -130,12 +130,6 @@ def net_process(model, image, target, mean, std=None):
     if True:
         attack = Cosine_PDG_Adam(step_size=0.02, clip_size=0.03)
         adver_input = model_immer_attack_auto_loss_combination(input, target, model, attack, 120, "cuda:0")
-
-        dif = torch.abs(adver_input - input)
-        
-        print("Dif_mean:", torch.mean(dif))
-        print("Dif_min:", torch.min(dif))
-        print("Dif_max:", torch.max(dif))
         
         with torch.no_grad():
             output = model(adver_input)
