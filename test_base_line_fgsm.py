@@ -73,6 +73,8 @@ def FGSM(input, target, model, clip_min, clip_max, eps=0.2):
     adversarial_example = torch.max(adversarial_example, clip_min)
     adversarial_example = torch.min(adversarial_example, clip_max)
     adversarial_example = torch.clamp(adversarial_example, min=0.0, max=1.0)
+    
+    print(adversarial_example)
 
     adversarial_example[:, 0, :, :] = (adversarial_example[:, 0, :, :] - mean_origin[0]) / std_origin[0]
     adversarial_example[:, 1, :, :] = (adversarial_example[:, 1, :, :] - mean_origin[1]) / std_origin[1]
