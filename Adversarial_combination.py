@@ -54,6 +54,8 @@ class Cosine_PDG_Adam:
         prediction_inner = prediction_inner.reshape(prediction_inner.shape[0], -1)
         target_inner = target_inner.reshape(target_inner.shape[0], -1)
 
+        print(image)
+        
         criterion = torch.nn.CrossEntropyLoss(ignore_index=255)
 
         loss1 = criterion(prediction, target)
@@ -80,7 +82,7 @@ class Cosine_PDG_Adam:
         image = torch.max(image, image_min)
         image = image.clamp(0,1)
         
-        print(torch.mean(image.reshape(-1).sum()))
+        print(image)
         
         image[:, 0, :, :] = (image[:, 0, :, :] - self.mean_origin[0]) / self.std_origin[0]
         image[:, 1, :, :] = (image[:, 1, :, :] - self.mean_origin[1]) / self.std_origin[1]
