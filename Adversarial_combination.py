@@ -53,8 +53,6 @@ class Cosine_PDG_Adam:
     def step_combination(self, image_min, image_max, image, prediction, prediction_inner, target, target_inner, i):
         prediction_inner = prediction_inner.reshape(prediction_inner.shape[0], -1)
         target_inner = target_inner.reshape(target_inner.shape[0], -1)
-
-        print(image)
         
         criterion = torch.nn.CrossEntropyLoss(ignore_index=255)
 
