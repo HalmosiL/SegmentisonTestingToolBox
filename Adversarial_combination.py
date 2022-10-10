@@ -106,7 +106,7 @@ class Cosine_PDG_Adam:
         image = torch.max(image, image_min)
         image = image.clamp(0,1)
         
-        print(torch.mean(image.sum()))
+        print(torch.mean(image.reshape(-1).sum()))
         
         image[:, 0, :, :] = (image[:, 0, :, :] - self.mean_origin[0]) / self.std_origin[0]
         image[:, 1, :, :] = (image[:, 1, :, :] - self.mean_origin[1]) / self.std_origin[1]
