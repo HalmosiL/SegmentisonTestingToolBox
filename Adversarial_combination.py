@@ -121,6 +121,8 @@ def model_immer_attack_auto_loss_combination(image, target, model, attack, numbe
     input_unnorm[:, 1, :, :] = input_unnorm[:, 1, :, :] * attack.std_origin[1] + attack.mean_origin[1]
     input_unnorm[:, 2, :, :] = input_unnorm[:, 2, :, :] * attack.std_origin[2] + attack.mean_origin[2]
 
+    print(attack.clip_size)
+    
     image_min = input_unnorm - attack.clip_size
     image_max = input_unnorm + attack.clip_size
     
