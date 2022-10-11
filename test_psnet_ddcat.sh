@@ -8,7 +8,7 @@ folders=(results_normal_500_image_valset_psnetDDCAT results_cosine_step_120_e_0.
 
 for i in "${!scripts[@]}"
 do
-        CUDA_VISIBLE_DEVICES=0 python3 "${scripts[$i]}"
+        CUDA_VISIBLE_DEVICES=1 python3 "${scripts[$i]}"
         mv -r ./results $experimatn_folder"${folders[$i]}"
 done
 
