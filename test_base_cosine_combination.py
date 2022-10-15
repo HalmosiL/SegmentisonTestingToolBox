@@ -22,9 +22,9 @@ cv2.ocl.setUseOpenCL(False)
 
 def get_parser():
     parser = argparse.ArgumentParser(description='PyTorch Semantic Segmentation')
-    parser.add_argument('--config', type=str, default='config/ade20k_pspnet50_not_my.yaml', help='config file')
+    parser.add_argument('--config', type=str, default='config/ddcat_conf.yaml', help='config file')
     parser.add_argument('--attack', action='store_true', help='evaluate the model with attack or not')
-    parser.add_argument('opts', help='see config/ade20k_pspnet50_not_my.yaml for all options', default=None, nargs=argparse.REMAINDER)
+    parser.add_argument('opts', help='see config/ddcat_conf.yaml for all options', default=None, nargs=argparse.REMAINDER)
     args = parser.parse_args()
     assert args.config is not None
 
@@ -114,8 +114,8 @@ def net_process(model, image, target, mean, std=None):
     else:
         for t, m, s in zip(input, mean, std):
             t.sub_(m).div_(s)
-    input = input.unsqueeze(0).to("cuda:0")
-    target = target.unsqueeze(0).to("cuda:0")
+    input = input.unsqueeze(0).to(args.test_gpu[0])
+    target = target.unsqueeze(0).to(args.test_gpu[0])
 
 
     if True:
@@ -129,7 +129,7 @@ def net_process(model, image, target, mean, std=None):
 
     if True:
         attack = Cosine_PDG_Adam(step_size=0.02, clip_size=0.03)
-        adver_input = model_immer_attack_auto_loss_combination(input, target, model, attack, 120, "cuda:0")
+        adver_input = model_immer_attack_auto_loss_combination(input, target, model, attack, 120, args.test_gpu[0])
         
         with torch.no_grad():
             output = model(adver_input)
