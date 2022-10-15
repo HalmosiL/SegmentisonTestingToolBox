@@ -91,7 +91,7 @@ def main():
     if not args.has_prediction:
         model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
         logger.info(model)
-        model = torch.nn.DataParallel(model).to("cuda:0")
+        model = torch.nn.DataParallel(model).to(args.test_gpu[0])
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
