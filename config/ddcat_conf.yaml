@@ -17,3 +17,4 @@ TEST:
   classes: 19
   zoom_factor: 8
   layers: 50
+  workers: 1
