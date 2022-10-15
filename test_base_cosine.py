@@ -23,9 +23,9 @@ MODEL_SLICE = None
 
 def get_parser():
     parser = argparse.ArgumentParser(description='PyTorch Semantic Segmentation')
-    parser.add_argument('--config', type=str, default='config/ade20k_pspnet50_not_my.yaml', help='config file')
+    parser.add_argument('--config', type=str, default='config/ddcat_conf.yaml', help='config file')
     parser.add_argument('--attack', action='store_true', help='evaluate the model with attack or not')
-    parser.add_argument('opts', help='see config/ade20k_pspnet50_not_my.yaml for all options', default=None, nargs=argparse.REMAINDER)
+    parser.add_argument('opts', help='see config/ddcat_conf.yaml for all options', default=None, nargs=argparse.REMAINDER)
     args = parser.parse_args()
     assert args.config is not None
 
