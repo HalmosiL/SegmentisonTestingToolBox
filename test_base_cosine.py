@@ -96,7 +96,7 @@ def main():
         MODEL_SLICE = model.getSliceModel().eval()
         MODEL_SLICE = MODEL_SLICE
         logger.info(model)
-        model = torch.nn.DataParallel(model).to("cuda:0")
+        model = torch.nn.DataParallel(model).to(args.test_gpu[0])
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
@@ -119,8 +119,8 @@ def net_process(model, image, target, mean, std=None):
     else:
         for t, m, s in zip(input, mean, std):
             t.sub_(m).div_(s)
-    input = input.unsqueeze(0).to("cuda:0")
-    target = target.unsqueeze(0).to("cuda:0")
+    input = input.unsqueeze(0).to(args.test_gpu[0])
+    target = target.unsqueeze(0).to(args.test_gpu[0])
 
 
     if True:
@@ -134,7 +134,7 @@ def net_process(model, image, target, mean, std=None):
 
     if True:
         attack = Cosine_PDG_Adam(step_size=10, clip_size=0.03)
-        adver_input = model_immer_attack_auto_loss(input, MODEL_SLICE, attack, 120, "cuda:0")
+        adver_input = model_immer_attack_auto_loss(input, MODEL_SLICE, attack, 120, args.test_gpu[0])
 
         with torch.no_grad():
             output = model(adver_input)
