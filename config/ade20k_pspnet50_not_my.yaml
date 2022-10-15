@@ -1,14 +1,3 @@
-Distributed:
-  dist_url: tcp://127.0.0.1:6789
-  dist_backend: 'nccl'
-  multiprocessing_distributed: false
-  world_size: 1
-  rank: 0
-  use_apex: True
-  opt_level: 'O0'
-  keep_batchnorm_fp32:
-  loss_scale:
-
 TEST:
   test_list: ./list/fine_val.txt
   split: val  # split in [train, val and test]
@@ -25,12 +14,6 @@ TEST:
   colors_path: ./config/cityscapes_colors.txt  # path of dataset colors
   names_path: ./config/cityscapes_names.txt  # path of dataset category namesDATA:
   data_root: ../../../CitySpace/Data/ok/
-  train_list: ./list/fine_train.txt
-  val_list: ./list/fine_val.txt
   classes: 19
-
-  mode: "my"
-  attack: ""
-  workers: 0
   zoom_factor: 8
   layers: 50
