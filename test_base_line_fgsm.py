@@ -12,7 +12,7 @@ import torch.nn.parallel
 import torch.utils.data
 import torch.nn as nn
 
-from model.pspnet import PSPNet_DDCAT, DeepLabV3_DDCAT
+from model.pspnet import PSPNet_DDCAT, DeepLabV3_DDCAT, PSPNet, DeepLabV3
 from util import dataset, transform, config
 from util.util import AverageMeter, intersectionAndUnion, check_makedirs, colorize
 
@@ -142,7 +142,15 @@ def main():
     names = [line.rstrip('\n') for line in open(args.names_path)]
 
     if not args.has_prediction:
-        model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        if(args.model == "PSPNet_DDCAT")
+            model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        elif(args.model == "PSPNet"):
+            model = PSPNet(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        elif(args.model == "DeepLabV3_DDCAT"):
+            model = DeepLabV3_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
+        elif(args.model == "DeepLabV3"):
+            model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
+        
         logger.info(model)
         model = torch.nn.DataParallel(model).to(args.test_gpu[0])
         cudnn.benchmark = True
