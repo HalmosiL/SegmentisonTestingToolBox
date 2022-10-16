@@ -12,7 +12,7 @@ import torch.nn.parallel
 import torch.utils.data
 import torch.nn as nn
 
-from model.pspnet import PSPNet_DDCAT, DeepLabV3_DDCAT
+from model.pspnet import PSPNet_DDCAT, DeepLabV3_DDCAT, PSPNet, DeepLabV3
 from util import dataset, transform, config
 from util.util import AverageMeter, intersectionAndUnion, check_makedirs, colorize
 
