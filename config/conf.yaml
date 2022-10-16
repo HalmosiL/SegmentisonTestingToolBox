@@ -1,0 +1,21 @@
+TEST:
+  test_list: ./list/fine_val.txt
+  split: val  # split in [train, val and test]
+  base_size: 1024  # based size for scaling
+  test_h: 449
+  test_w: 449
+  scales: [1.0]  # evaluation scales, ms as [0.5, 0.75, 1.0, 1.25, 1.5, 1.75]
+  has_prediction: False  # has prediction already or not
+  index_start: 0  # evaluation start index in list
+  index_step: 0  # evaluation step index in list, 0 means to end
+  test_gpu: [0]
+  model_path: ./Models/train_epoch_400.pth # evaluation model path
+  save_folder: ./results/  # results save folder
+  colors_path: ./config/cityscapes_colors.txt  # path of dataset colors
+  names_path: ./config/cityscapes_names.txt  # path of dataset category namesDATA:
+  data_root: ../../../CitySpace/Data/ok/
+  classes: 19
+  zoom_factor: 8
+  layers: 50
+  workers: 1
+  number_of_steps: 120
