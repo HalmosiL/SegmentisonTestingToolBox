@@ -10,7 +10,7 @@ folders=(results_normal_500_image_valset results_cosine_step_120_e_0.03_500_imag
 for i in "${!scripts[@]}"
 do
         python3 "${scripts[$i]}" --config ./config/conf_deeplabv3_ddcat.yaml
-        mv ./results $experimatn_folder"${folders[$i]}"
+        mv ./results_ $experimatn_folder"${folders[$i]}"
 done
 
 echo "-------------------------Finished-----------------------------"
