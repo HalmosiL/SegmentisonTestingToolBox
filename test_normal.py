@@ -96,7 +96,7 @@ def main():
             model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
         
         logger.info(model)
-        model = torch.nn.DataParallel(model).to(args.test_gpu[0])
+        model = torch.nn.DataParallel(model).to("cuda:" + args.test_gpu[0])
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
@@ -119,8 +119,8 @@ def net_process(model, image, target, mean, std=None):
     else:
         for t, m, s in zip(input, mean, std):
             t.sub_(m).div_(s)
-    input = input.unsqueeze(0).to(args.test_gpu[0])
-    target = target.unsqueeze(0).to(args.test_gpu[0])
+    input = input.unsqueeze(0).to("cuda:" + args.test_gpu[0])
+    target = target.unsqueeze(0).to("cuda:" + args.test_gpu[0]])
 
     input = torch.cat([input, input.flip(3)], 0)
     target = torch.cat([target, target.flip(2)], 0)
