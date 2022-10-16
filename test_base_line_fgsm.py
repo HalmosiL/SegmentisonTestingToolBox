@@ -152,11 +152,14 @@ def main():
             model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
         
         logger.info(model)
-        model = torch.nn.DataParallel(model).to(args.test_gpu[0])
+        print("cuda:" + str(args.test_gpu[0]))
+        model = model.to("cuda:" + str(args.test_gpu[0]))
+        model = torch.nn.DataParallel(model, device_ids=[args.test_gpu[0]]).to("cuda:" + str(args.test_gpu[0]))
+        
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
-            checkpoint = torch.load(args.model_path)
+            checkpoint = torch.load(args.model_path, map_location="cuda:" + str(args.test_gpu[0]))
             model.load_state_dict(checkpoint['state_dict'], strict=False)
             logger.info("=> loaded checkpoint '{}'".format(args.model_path))
         else:
