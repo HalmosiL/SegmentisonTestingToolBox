@@ -154,7 +154,7 @@ def main():
             model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
             
         logger.info(model)
-        model = torch.nn.DataParallel(model).cuda()
+        model = torch.nn.DataParallel(model.to(args.test_gpu[0])
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
