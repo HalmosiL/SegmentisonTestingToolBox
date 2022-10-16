@@ -330,12 +330,17 @@ class DeepLabV3_DDCAT(nn.Module):
         if self.use_aspp:
             x_inner = self.aspp(x)
             x = x_inner
-            
-        x = self.cls(x)
+        result_normal = self.cls1(x)
+        result_adver = self.cls2(x)
+        mask1 = self.mask1(x)
+        
         if self.zoom_factor != 1:
-            x = F.interpolate(x, size=(h, w), mode='bilinear', align_corners=True)
-
-        return x, x_inner
+            result_normal = F.interpolate(result_normal, size=(h, w), mode='bilinear', align_corners=True)
+            result_adver = F.interpolate(result_adver, size=(h, w), mode='bilinear', align_corners=True)
+            mask1 = F.interpolate(mask1, size=(h, w), mode='bilinear', align_corners=True)
+            
+        final_result = result_normal
+        return final_result, x_inner
         
     def getSliceModel(self):
         class SliceModule(nn.Module):
