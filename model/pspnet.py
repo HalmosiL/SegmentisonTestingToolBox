@@ -46,7 +46,7 @@ class ASPP(nn.Module):
 
 
 class DeepLabV3(nn.Module):
-    def __init__(self, layers=50, atrous_rates=(6, 12, 18), dropout=0.1, classes=2, zoom_factor=8, use_aspp=True, criterion=nn.CrossEntropyLoss(ignore_index=255), BatchNorm=nn.BatchNorm2d, pretrained=True):
+    def __init__(self, layers=50, atrous_rates=(6, 12, 18), dropout=0.1, classes=2, zoom_factor=8, use_aspp=True, criterion=nn.CrossEntropyLoss(ignore_index=255), BatchNorm=nn.BatchNorm2d, pretrained=False):
         super(DeepLabV3, self).__init__()
         assert layers in [50, 101, 152]
         assert classes > 1
@@ -186,7 +186,7 @@ class DeepLabV3(nn.Module):
 
 
 class DeepLabV3_DDCAT(nn.Module):
-    def __init__(self, layers=50, atrous_rates=(6, 12, 18), dropout=0.1, classes=2, zoom_factor=8, use_aspp=True, criterion=nn.CrossEntropyLoss(ignore_index=255), BatchNorm=nn.BatchNorm2d, pretrained=True):
+    def __init__(self, layers=50, atrous_rates=(6, 12, 18), dropout=0.1, classes=2, zoom_factor=8, use_aspp=True, criterion=nn.CrossEntropyLoss(ignore_index=255), BatchNorm=nn.BatchNorm2d, pretrained=False):
         super(DeepLabV3_DDCAT, self).__init__()
         assert layers in [50, 101, 152]
         assert classes > 1
