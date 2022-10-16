@@ -106,6 +106,8 @@ def main():
         model = model.to("cuda:" + str(args.test_gpu[0]))
         model = torch.nn.DataParallel(model, device_ids=[args.test_gpu[0]]).to("cuda:" + str(args.test_gpu[0]))
         
+        MODEL_SLICE = model.getSliceModel()
+        
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
