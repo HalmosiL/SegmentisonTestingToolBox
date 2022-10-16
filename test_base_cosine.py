@@ -92,7 +92,7 @@ def main():
     global MODEL_SLICE
 
     if not args.has_prediction:
-        if(args.model == "PSPNet_DDCAT")
+        if(args.model == "PSPNet_DDCAT"):
             model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
         elif(args.model == "PSPNet"):
             model = PSPNet(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
