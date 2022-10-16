@@ -1,5 +1,5 @@
 TEST:
-  test_list: ./list/fine_val.txt
+  test_list: ./list/original_val.txt
   split: val  # split in [train, val and test]
   base_size: 1024  # based size for scaling
   test_h: 449
