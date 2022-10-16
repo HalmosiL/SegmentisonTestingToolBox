@@ -59,7 +59,7 @@ def FGSM(input, target, model, clip_min, clip_max, eps=0.2):
         target = F.interpolate(target.unsqueeze(1).float(), size=(h, w), mode='bilinear', align_corners=True).squeeze(1).long()
 
     ignore_label = 255
-    criterion = nn.CrossEntropyLoss(ignore_index=ignore_label).cuda()
+    criterion = nn.CrossEntropyLoss(ignore_index=ignore_label).to(args.test_gpu[0])
     loss = criterion(result, target.detach())
     loss.backward()
     res = input_variable.grad
