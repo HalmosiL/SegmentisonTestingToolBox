@@ -12,7 +12,7 @@ import torch.nn.parallel
 import torch.utils.data
 import torch.nn as nn
 
-from model.pspnet import PSPNet_DDCAT, DeepLabV3_DDCAT
+from model.pspnet import PSPNet_DDCAT, DeepLabV3_DDCAT, PSPNet, DeepLabV3
 from Adversarial import Adam_optimizer
 from util import dataset, transform, config
 from util.util import AverageMeter, intersectionAndUnion, check_makedirs, colorize
@@ -59,7 +59,7 @@ def PGD(input, target, model, clip_min, clip_max, optimizer=None):
         target = F.interpolate(target.unsqueeze(1).float(), size=(h, w), mode='bilinear', align_corners=True).squeeze(1).long()
 
     ignore_label = 255
-    criterion = nn.CrossEntropyLoss(ignore_index=ignore_label).cuda()
+    criterion = nn.CrossEntropyLoss(ignore_index=ignore_label).to(args.test_gpu[0])
     loss = criterion(result, target.detach())
     loss.backward()
     
@@ -144,7 +144,15 @@ def main():
     names = [line.rstrip('\n') for line in open(args.names_path)]
 
     if not args.has_prediction:
-        model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        if(args.model == "PSPNet_DDCAT")
+            model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        elif(args.model == "PSPNet"):
+            model = PSPNet(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        elif(args.model == "DeepLabV3_DDCAT"):
+            model = DeepLabV3_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
+        elif(args.model == "DeepLabV3"):
+            model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
+            
         logger.info(model)
         model = torch.nn.DataParallel(model).cuda()
         cudnn.benchmark = True
@@ -169,8 +177,8 @@ def net_process(model, image, target, mean, std=None):
     else:
         for t, m, s in zip(input, mean, std):
             t.sub_(m).div_(s)
-    input = input.unsqueeze(0).cuda()
-    target = target.unsqueeze(0).cuda()
+    input = input.unsqueeze(0).to(args.test_gpu[0])
+    target = target.unsqueeze(0).to(args.test_gpu[0])
 
 
     if True:
