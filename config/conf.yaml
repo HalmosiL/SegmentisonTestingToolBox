@@ -10,7 +10,7 @@ TEST:
   index_step: 0  # evaluation step index in list, 0 means to end
   test_gpu: [1]
   model_path: ../Models/pretrain/cityscapes/pspnet/sat/train_epoch_400.pth # evaluation model path
-  save_folder: ../results/  # results save folder
+  save_folder: ./results/  # results save folder
   colors_path: ./config/cityscapes_colors.txt  # path of dataset colors
   names_path: ./config/cityscapes_names.txt  # path of dataset category namesDATA:
   data_root: ../../city-scapes-dataset/
