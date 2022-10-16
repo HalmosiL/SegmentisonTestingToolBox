@@ -14,7 +14,7 @@ import torch.nn as nn
 import glob
 
 from Adversarial_combination import Cosine_PDG_Adam, model_immer_attack_auto_loss_combination
-from model.pspnet import PSPNet_DDCAT, DeepLabV3_DDCAT
+from model.pspnet import PSPNet_DDCAT, DeepLabV3_DDCAT, PSPNet, DeepLabV3
 from util import dataset, transform, config
 from util.util import AverageMeter, intersectionAndUnion, check_makedirs, colorize
 
