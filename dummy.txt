@@ -1,3 +1,0 @@
-leftImg8bit/val/frankfurt/frankfurt_000001_073088_leftImg8bit.png gtFine/val/frankfurt/frankfurt_000001_073088_gtFine_labelTrainIds.png
-leftImg8bit/val/munster/munster_000153_000019_leftImg8bit.png gtFine/val/munster/munster_000153_000019_gtFine_labelTrainIds.png
-leftImg8bit/val/frankfurt/frankfurt_000001_067735_leftImg8bit.png gtFine/val/frankfurt/frankfurt_000001_067735_gtFine_labelTrainIds.png
