@@ -19,3 +19,4 @@ TEST:
   layers: 50
   workers: 1
   number_of_steps: 120
+  model: PSPNet
