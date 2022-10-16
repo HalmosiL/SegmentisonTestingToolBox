@@ -13,7 +13,7 @@ TEST:
   save_folder: ../results/  # results save folder
   colors_path: ./config/cityscapes_colors.txt  # path of dataset colors
   names_path: ./config/cityscapes_names.txt  # path of dataset category namesDATA:
-  data_root: ../../../CitySpace/Data/ok/
+  data_root: ../../CitySpace/Data/ok/
   classes: 19
   zoom_factor: 8
   layers: 50
