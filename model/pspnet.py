@@ -125,6 +125,27 @@ class DeepLabV3(nn.Module):
         else:
             return x
         
+    def forward_inner_and_full(self, x, indicate=0):
+        x_size = x.size()
+        assert (x_size[2]-1) % 8 == 0 and (x_size[3]-1) % 8 == 0
+        h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
+        w = int((x_size[3] - 1) / 8 * self.zoom_factor + 1)
+
+        x = self.layer0(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x_tmp = self.layer3(x)
+        x = self.layer4(x_tmp)
+        if self.use_aspp:
+            x_inner = self.aspp(x)
+            x = x_inner
+            
+        x = self.cls(x)
+        if self.zoom_factor != 1:
+            x = F.interpolate(x, size=(h, w), mode='bilinear', align_corners=True)
+
+        return x, x_inner
+        
     def getSliceModel(self):
         class SliceModule(nn.Module):
             def __init__(self, 
@@ -288,7 +309,28 @@ class DeepLabV3_DDCAT(nn.Module):
         else:
             final_result = result_normal
             return final_result
+        
+    def forward_inner_and_full(self, x, indicate=0):
+        x_size = x.size()
+        assert (x_size[2]-1) % 8 == 0 and (x_size[3]-1) % 8 == 0
+        h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
+        w = int((x_size[3] - 1) / 8 * self.zoom_factor + 1)
 
+        x = self.layer0(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x_tmp = self.layer3(x)
+        x = self.layer4(x_tmp)
+        if self.use_aspp:
+            x_inner = self.aspp(x)
+            x = x_inner
+            
+        x = self.cls(x)
+        if self.zoom_factor != 1:
+            x = F.interpolate(x, size=(h, w), mode='bilinear', align_corners=True)
+
+        return x, x_inner
+        
     def getSliceModel(self):
         class SliceModule(nn.Module):
             def __init__(self, 
@@ -429,15 +471,7 @@ class PSPNet(nn.Module):
         if self.zoom_factor != 1:
             x = F.interpolate(x, size=(h, w), mode='bilinear', align_corners=True)
 
-        if self.training or indicate==1:
-            aux = self.aux(x_tmp)
-            if self.zoom_factor != 1:
-                aux = F.interpolate(aux, size=(h, w), mode='bilinear', align_corners=True)
-            main_loss = self.criterion(x, y)
-            aux_loss = self.criterion(aux, y)
-            return x.max(1)[1], main_loss, aux_loss, x
-        else:
-            return x, x_inner
+        return x, x_inner
         
         
     def getSliceModel(self):
