@@ -46,60 +46,6 @@ def get_logger():
     logger.addHandler(handler)
     return logger
 
-
-def FGSM(input, target, model, clip_min, clip_max, eps=0.2):
-    input_variable = input.detach().clone()
-    input_variable.requires_grad = True
-    model.zero_grad()
-    result = model(input_variable)
-    if args.zoom_factor != 8:
-        h = int((target.size()[1] - 1) / 8 * args.zoom_factor + 1)
-        w = int((target.size()[2] - 1) / 8 * args.zoom_factor + 1)
-        # 'nearest' mode doesn't support align_corners mode and 'bilinear' mode is fine for downsampling
-        target = F.interpolate(target.unsqueeze(1).float(), size=(h, w), mode='bilinear', align_corners=True).squeeze(1).long()
-
-    ignore_label = 255
-    criterion = nn.CrossEntropyLoss(ignore_index=ignore_label).cuda()
-    loss = criterion(result, target.detach())
-    loss.backward()
-    res = input_variable.grad
-
-    ################################################################################
-    adversarial_example = input.detach().clone()
-    adversarial_example[:, 0, :, :] = adversarial_example[:, 0, :, :] * std_origin[0] + mean_origin[0]
-    adversarial_example[:, 1, :, :] = adversarial_example[:, 1, :, :] * std_origin[1] + mean_origin[1]
-    adversarial_example[:, 2, :, :] = adversarial_example[:, 2, :, :] * std_origin[2] + mean_origin[2]
-    adversarial_example = adversarial_example + eps * torch.sign(res)
-    adversarial_example = torch.max(adversarial_example, clip_min)
-    adversarial_example = torch.min(adversarial_example, clip_max)
-    adversarial_example = torch.clamp(adversarial_example, min=0.0, max=1.0)
-
-    adversarial_example[:, 0, :, :] = (adversarial_example[:, 0, :, :] - mean_origin[0]) / std_origin[0]
-    adversarial_example[:, 1, :, :] = (adversarial_example[:, 1, :, :] - mean_origin[1]) / std_origin[1]
-    adversarial_example[:, 2, :, :] = (adversarial_example[:, 2, :, :] - mean_origin[2]) / std_origin[2]
-    ################################################################################
-    return adversarial_example
-
-
-
-def BIM(input, target, model, eps=0.03, k_number=2, alpha=0.01):
-    input_unnorm = input.clone().detach()
-    input_unnorm[:, 0, :, :] = input_unnorm[:, 0, :, :] * std_origin[0] + mean_origin[0]
-    input_unnorm[:, 1, :, :] = input_unnorm[:, 1, :, :] * std_origin[1] + mean_origin[1]
-    input_unnorm[:, 2, :, :] = input_unnorm[:, 2, :, :] * std_origin[2] + mean_origin[2]
-    clip_min = input_unnorm - eps
-    clip_max = input_unnorm + eps
-
-    adversarial_example = input.detach().clone()
-    adversarial_example.requires_grad = True
-    for mm in range(k_number):
-        adversarial_example = FGSM(adversarial_example, target, model, clip_min, clip_max, eps=alpha)
-        adversarial_example = adversarial_example.detach()
-        adversarial_example.requires_grad = True
-        model.zero_grad()
-    return adversarial_example
-
-
 def main():
     global args, logger
     args = get_parser()
@@ -140,9 +86,17 @@ def main():
     names = [line.rstrip('\n') for line in open(args.names_path)]
 
     if not args.has_prediction:
-        model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        if(args.model == "PSPNet_DDCAT")
+            model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        elif(args.model == "PSPNet"):
+            model = PSPNet(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
+        elif(args.model == "DeepLabV3_DDCAT"):
+            model = DeepLabV3_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
+        elif(args.model == "DeepLabV3"):
+            model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
+        
         logger.info(model)
-        model = torch.nn.DataParallel(model).cuda()
+        model = torch.nn.DataParallel(model).to(args.test_gpu[0])
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
@@ -165,26 +119,14 @@ def net_process(model, image, target, mean, std=None):
     else:
         for t, m, s in zip(input, mean, std):
             t.sub_(m).div_(s)
-    input = input.unsqueeze(0).cuda()
-    target = target.unsqueeze(0).cuda()
+    input = input.unsqueeze(0).to(args.test_gpu[0])
+    target = target.unsqueeze(0).to(args.test_gpu[0])
 
+    input = torch.cat([input, input.flip(3)], 0)
+    target = torch.cat([target, target.flip(2)], 0)
 
-    if False:
-        flip = False
-    else:
-        flip = True
-
-    if flip:
-        input = torch.cat([input, input.flip(3)], 0)
-        target = torch.cat([target, target.flip(2)], 0)
-
-    if False:
-        adver_input = BIM(input, target, model, eps=0.03, k_number=0, alpha=0.01)
-        with torch.no_grad():
-            output = model(adver_input)
-    else:
-        with torch.no_grad():
-            output = model(input)
+    with torch.no_grad():
+        output = model(input)
 
     _, _, h_i, w_i = input.shape
     _, _, h_o, w_o = output.shape
@@ -192,10 +134,8 @@ def net_process(model, image, target, mean, std=None):
         output = F.interpolate(output, (h_i, w_i), mode='bilinear', align_corners=True)
 
     output = F.softmax(output, dim=1)
-    if flip:
-        output = (output[0] + output[1].flip(2)) / 2
-    else:
-        output = output[0]
+    output = (output[0] + output[1].flip(2)) / 2
+
     output = output.data.cpu().numpy()
     output = output.transpose(1, 2, 0)
     return output
