@@ -97,6 +97,7 @@ def main():
         
         logger.info(model)
         print("cuda:" + str(args.test_gpu[0]))
+        model = model.to("cuda:" + str(args.test_gpu[0]))
         model = torch.nn.DataParallel(model).to("cuda:" + str(args.test_gpu[0]))
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
