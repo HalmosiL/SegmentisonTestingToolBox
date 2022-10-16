@@ -103,8 +103,8 @@ def main():
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
-            checkpoint = torch.load(args.model_path)
-            model.load_state_dict(checkpoint['state_dict'], strict=False, map_location="cuda:" + str(args.test_gpu[0]))
+            checkpoint = torch.load(args.model_path, map_location="cuda:" + str(args.test_gpu[0]))
+            model.load_state_dict(checkpoint['state_dict'], strict=False)
             logger.info("=> loaded checkpoint '{}'".format(args.model_path))
         else:
             raise RuntimeError("=> no checkpoint found at '{}'".format(args.model_path))
