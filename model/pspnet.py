@@ -139,9 +139,11 @@ class DeepLabV3(nn.Module):
         x = self.layer2(x)
         x_tmp = self.layer3(x)
         x = self.layer4(x_tmp)
+        
+        x_inner = x
+        
         if self.use_aspp:
-            x_inner = self.aspp(x)
-            x = x_inner
+            x = self.aspp(x)
             
         x = self.cls(x)
         if self.zoom_factor != 1:
@@ -327,9 +329,11 @@ class DeepLabV3_DDCAT(nn.Module):
         x = self.layer2(x)
         x_tmp = self.layer3(x)
         x = self.layer4(x_tmp)
+        x_inner = x
+        
         if self.use_aspp:
-            x_inner = self.aspp(x)
-            x = x_inner
+            x = self.aspp(x)
+            
         result_normal = self.cls1(x)
         result_adver = self.cls2(x)
         mask1 = self.mask1(x)
