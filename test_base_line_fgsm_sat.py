@@ -21,9 +21,9 @@ cv2.ocl.setUseOpenCL(False)
 
 def get_parser():
     parser = argparse.ArgumentParser(description='PyTorch Semantic Segmentation')
-    parser.add_argument('--config', type=str, default='config/ade20k_pspnet50_not_my.yaml', help='config file')
+    parser.add_argument('--config', type=str, default='config/ddcat_conf', help='config file')
     parser.add_argument('--attack', action='store_true', help='evaluate the model with attack or not')
-    parser.add_argument('opts', help='see config/ade20k_pspnet50_not_my.yaml for all options', default=None, nargs=argparse.REMAINDER)
+    parser.add_argument('opts', help='see config/ddcat_conf for all options', default=None, nargs=argparse.REMAINDER)
     args = parser.parse_args()
     assert args.config is not None
 
@@ -59,7 +59,7 @@ def FGSM(input, target, model, clip_min, clip_max, eps=0.2):
         target = F.interpolate(target.unsqueeze(1).float(), size=(h, w), mode='bilinear', align_corners=True).squeeze(1).long()
 
     ignore_label = 255
-    criterion = nn.CrossEntropyLoss(ignore_index=ignore_label).cuda()
+    criterion = nn.CrossEntropyLoss(ignore_index=ignore_label).to(args.test_gpu[0])
     loss = criterion(result, target.detach())
     loss.backward()
     res = input_variable.grad
@@ -73,6 +73,8 @@ def FGSM(input, target, model, clip_min, clip_max, eps=0.2):
     adversarial_example = torch.max(adversarial_example, clip_min)
     adversarial_example = torch.min(adversarial_example, clip_max)
     adversarial_example = torch.clamp(adversarial_example, min=0.0, max=1.0)
+    
+    print(adversarial_example)
 
     adversarial_example[:, 0, :, :] = (adversarial_example[:, 0, :, :] - mean_origin[0]) / std_origin[0]
     adversarial_example[:, 1, :, :] = (adversarial_example[:, 1, :, :] - mean_origin[1]) / std_origin[1]
@@ -142,7 +144,7 @@ def main():
     if not args.has_prediction:
         model = PSPNet(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
         logger.info(model)
-        model = torch.nn.DataParallel(model).cuda()
+        model = torch.nn.DataParallel(model).to(args.test_gpu[0])
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
@@ -165,8 +167,8 @@ def net_process(model, image, target, mean, std=None):
     else:
         for t, m, s in zip(input, mean, std):
             t.sub_(m).div_(s)
-    input = input.unsqueeze(0).cuda()
-    target = target.unsqueeze(0).cuda()
+    input = input.unsqueeze(0).to(args.test_gpu[0])
+    target = target.unsqueeze(0).to(args.test_gpu[0])
 
 
     if True:
@@ -179,7 +181,7 @@ def net_process(model, image, target, mean, std=None):
         target = torch.cat([target, target.flip(2)], 0)
 
     if True:
-        adver_input = BIM(input, target, model, eps=0.03, k_number=120, alpha=0.01)
+        adver_input = BIM(input, target, model, eps=0.03, k_number=args.number_of_steps, alpha=0.01)
         with torch.no_grad():
             output = model(adver_input)
     else:
