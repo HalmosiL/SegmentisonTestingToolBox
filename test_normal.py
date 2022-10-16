@@ -120,7 +120,7 @@ def net_process(model, image, target, mean, std=None):
         for t, m, s in zip(input, mean, std):
             t.sub_(m).div_(s)
     input = input.unsqueeze(0).to("cuda:" + args.test_gpu[0])
-    target = target.unsqueeze(0).to("cuda:" + args.test_gpu[0]])
+    target = target.unsqueeze(0).to("cuda:" + args.test_gpu[0])
 
     input = torch.cat([input, input.flip(3)], 0)
     target = torch.cat([target, target.flip(2)], 0)
