@@ -98,7 +98,10 @@ class DeepLabV3(nn.Module):
                 nn.Conv2d(out_channels, classes, kernel_size=1)
             )
 
-    def forward(self, x, y=None, indicate=0):
+    def forward(self, x, y=None, indicate=0, inner=False):
+        if(inner):
+            return self.forward_inner_and_full(x)
+        
         x_size = x.size()
         assert (x_size[2]-1) % 8 == 0 and (x_size[3]-1) % 8 == 0
         h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
@@ -256,7 +259,10 @@ class DeepLabV3_DDCAT(nn.Module):
                 nn.Conv2d(out_channels, classes, kernel_size=1)
             )
 
-    def forward(self, x, y_target=None, indicate_map=None, indicate=0):
+    def forward(self, x, y_target=None, indicate_map=None, indicate=0, inner=False):
+        if(inner):
+            return self.forward_inner_and_full(x)
+        
         x_size = x.size()
         assert (x_size[2]-1) % 8 == 0 and (x_size[3]-1) % 8 == 0
         h = int((x_size[2] - 1) / 8 * self.zoom_factor + 1)
