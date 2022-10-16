@@ -97,9 +97,9 @@ def main():
         elif(args.model == "PSPNet"):
             model = PSPNet(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
         elif(args.model == "DeepLabV3_DDCAT"):
-            model = DeepLabV3_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=criterion, BatchNorm=nn.BatchNorm2d)
+            model = DeepLabV3_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
         elif(args.model == "DeepLabV3"):
-            model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=criterion, BatchNorm=nn.BatchNorm2d)
+            model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
         
         MODEL_SLICE = model.getSliceModel().eval()
         MODEL_SLICE = MODEL_SLICE
