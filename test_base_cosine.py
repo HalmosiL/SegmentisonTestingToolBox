@@ -74,8 +74,8 @@ def main():
     mean_origin = [0.485, 0.456, 0.406]
     std_origin = [0.229, 0.224, 0.225]
 
-    gray_folder = os.path.join(args.save_folder + 'cosine/', 'gray')
-    color_folder = os.path.join(args.save_folder + 'cosine/', 'color')
+    gray_folder = os.path.join(args.save_folder + '_cosine/', 'gray')
+    color_folder = os.path.join(args.save_folder + '_cosine/', 'color')
 
     test_transform = transform.Compose([transform.ToTensor()])
     test_data = dataset.SemData(split=args.split, data_root=args.data_root, data_list=args.test_list, transform=test_transform)
