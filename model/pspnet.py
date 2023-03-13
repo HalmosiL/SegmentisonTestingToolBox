@@ -6,6 +6,45 @@ import model.resnet as models
 import numpy as np
 import copy
 
+class Dummy(nn.Module):
+    def __init__(    
+        self,
+        layers=50,
+        atrous_rates=(6, 12, 18),
+        dropout=0.1,
+        classes=2,
+        zoom_factor=8,
+        use_aspp=True,
+        criterion=nn.CrossEntropyLoss(ignore_index=255),
+        BatchNorm=nn.BatchNorm2d,
+        pretrained=False
+    ):
+        super(Dummy, self).__init__()
+        self.layer_1 = nn.Conv2d(3, 16, 1)
+        self.layer_2 = nn.Conv2d(16, 16, 1)
+        self.layer_3 = nn.Conv2d(16, 16, 1)
+        self.layer_4 = nn.Conv2d(16, 16, 1)
+        self.layer_5 = nn.Conv2d(16, 16, 1)
+        self.layer_6 = nn.Conv2d(16, 19, 1)
+
+    def getSliceModel(self):
+        return nn.Sequential(
+            self.layer_1
+        )
+
+    def forward(self, x, y=None, indicate=0, inner=False):
+        x_inner = self.layer_1(x)
+        x = self.layer_2(x_inner)
+        x = self.layer_3(x)
+        x = self.layer_4(x)
+        x = self.layer_5(x)
+        x = self.layer_6(x)
+
+        if(inner):
+            return x, x_inner
+        else:
+            return x
+
 class PPM(nn.Module):
     def __init__(self, in_dim, reduction_dim, bins, BatchNorm):
         super(PPM, self).__init__()

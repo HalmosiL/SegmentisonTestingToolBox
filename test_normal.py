@@ -86,15 +86,11 @@ def main():
     names = [line.rstrip('\n') for line in open(args.names_path)]
 
     if not args.has_prediction:
-        if(args.model == "PSPNet_DDCAT"):
+        if(os.environ['model'] == "ddcat"):
             model = PSPNet_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
-        elif(args.model == "PSPNet"):
+        elif(os.environ['model'] == "normal" or os.environ['model'] == "sat"):
             model = PSPNet(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, pretrained=False)
-        elif(args.model == "DeepLabV3_DDCAT"):
-            model = DeepLabV3_DDCAT(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
-        elif(args.model == "DeepLabV3"):
-            model = DeepLabV3(layers=args.layers, classes=args.classes, zoom_factor=args.zoom_factor, criterion=None, BatchNorm=nn.BatchNorm2d)
-        
+
         logger.info(model)
         print("cuda:" + str(args.test_gpu[0]))
         model = model.to("cuda:" + str(args.test_gpu[0]))
@@ -103,7 +99,14 @@ def main():
         cudnn.benchmark = True
         if os.path.isfile(args.model_path):
             logger.info("=> loading checkpoint '{}'".format(args.model_path))
-            checkpoint = torch.load(args.model_path, map_location="cuda:" + str(args.test_gpu[0]))
+
+            if(os.environ['model'] == "ddcat"):
+                checkpoint = torch.load(args.model_path_ddcat, map_location="cuda:" + str(args.test_gpu[0]))
+            elif(os.environ['model'] == "normal"):
+                checkpoint = torch.load(args.model_path_normal, map_location="cuda:" + str(args.test_gpu[0]))
+            elif(os.environ['model'] == "sat"):
+                checkpoint = torch.load(args.model_path_sat, map_location="cuda:" + str(args.test_gpu[0]))
+            
             model.load_state_dict(checkpoint['state_dict'], strict=False)
             logger.info("=> loaded checkpoint '{}'".format(args.model_path))
         else:

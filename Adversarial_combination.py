@@ -67,9 +67,6 @@ class Cosine_PDG_Adam:
         grad1 = torch.nn.functional.normalize(grad1)
         grad2 = torch.nn.functional.normalize(grad2)
         
-        print("loss_entropy:", loss1.item())
-        print("loss_cossine:", loss2.item())
-        
         image = self.optimizer.step(-1 * (grad2 + grad1), image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
@@ -79,8 +76,6 @@ class Cosine_PDG_Adam:
         image = torch.min(image, image_max)
         image = torch.max(image, image_min)
         image = image.clamp(0,1)
-        
-        print(image)
         
         image[:, 0, :, :] = (image[:, 0, :, :] - self.mean_origin[0]) / self.std_origin[0]
         image[:, 1, :, :] = (image[:, 1, :, :] - self.mean_origin[1]) / self.std_origin[1]
@@ -94,8 +89,7 @@ class Cosine_PDG_Adam:
 
         loss = (1 - self.loss_function(prediction, target)).sum()
         grad = torch.autograd.grad(loss, image, retain_graph=False, create_graph=False)[0]
-        print("loss:", loss.item())
-        
+
         image = self.optimizer.step(grad, image)
         
         image[:, 0, :, :] = image[:, 0, :, :] * self.std_origin[0] + self.mean_origin[0]
@@ -105,8 +99,6 @@ class Cosine_PDG_Adam:
         image = torch.min(image, image_max)
         image = torch.max(image, image_min)
         image = image.clamp(0,1)
-        
-        print(torch.mean(image.reshape(-1).sum()))
         
         image[:, 0, :, :] = (image[:, 0, :, :] - self.mean_origin[0]) / self.std_origin[0]
         image[:, 1, :, :] = (image[:, 1, :, :] - self.mean_origin[1]) / self.std_origin[1]

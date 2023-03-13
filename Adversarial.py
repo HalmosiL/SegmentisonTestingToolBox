@@ -56,17 +56,12 @@ class Cosine_PDG_Adam:
 
         criterion = torch.nn.CrossEntropyLoss(ignore_index=255)
 
-        print(prediction.shape)
-        print(target.shape)
-
         loss1 = criterion(prediction, target)
         loss2 = self.loss_function(prediction_inner, target_inner).sum()
 
         loss = loss1 + loss2
 
         grad1 = torch.autograd.grad(loss, image, retain_graph=False, create_graph=False)[0]
-
-        print("loss:", loss.item())
         
         image = self.optimizer.step(-1 * grad1, image)
         
@@ -91,7 +86,6 @@ class Cosine_PDG_Adam:
 
         loss = (1 - self.loss_function(prediction, target)).sum()
         grad = torch.autograd.grad(loss, image, retain_graph=False, create_graph=False)[0]
-        print("loss:", loss.item())
         
         image = self.optimizer.step(-1*grad, image)
         
